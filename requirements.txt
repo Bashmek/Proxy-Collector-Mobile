@@ -1,3 +1,24 @@
+# Основные зависимости
 cryptography>=41.0.0
-ttkbootstrap>=1.10.1
 Pillow>=10.0.0
+
+# Desktop GUI
+ttkbootstrap>=1.10.1
+
+# Mobile GUI (Kivy)
+kivy>=2.2.0
+kivy-deps.angle>=0.4.0
+kivy-deps.glew>=0.3.0
+kivy-deps.sdl2>=0.7.0
+
+# Кроссплатформенные API
+plyer>=2.1.0
+
+# HTTP и сеть
+requests>=2.31.0
+urllib3>=2.0.0
+certifi>=2023.0.0
+
+# Для сборки Android
+# buildozer (устанавливается отдельно)
+# python-for-android (устанавливается отдельно)
