@@ -1,58 +1,28 @@
 ```
-# Python
+# Buildozer and Python-for-Android
+.buildozer/
+python-for-android/
+
+# Compressed archives
+*.tar.gz
+*.zip
+*.gz
+*.tar
+
+# Build artifacts
+build/
+dist/
+
+# Logs
+*.log
+build_log.txt
+
+# Dependencies
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
 .Python
 env/
 venv/
 .venv/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git/
-.mypy_cache/
-.pytest_cache/
-.hypothesis/
-
-# Build
-build/
-dist/
-*.egg
-*.egg-info/
-.eggs/
-.installed.cfg
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.manifest
-*.spec
-
-# Mobile app build
-*.apk
-*.aab
-*.ipa
-
-# Config
-*.spec
-
-# Temp files
-*.tmp
-*.swp
-*~
-.DS_Store
-Thumbs.db
 ```
