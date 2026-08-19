@@ -1,9 +1,10 @@
-"""Mobile Android version of Proxy Collector using Kivy."""
+# Mobile Android version of Proxy Collector using Kivy
+# Refactored to use modular architecture
+
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.recycleview import RecyclerView
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
@@ -15,16 +16,20 @@ from kivy.core.window import Window
 import threading
 import time
 from datetime import datetime
-from proxy_collect.checker import check_many
-from proxy_collect.collector import collect_all
-from proxy_collect.sources import DEFAULT_SOURCES
-from proxy_collect.parser import extract_proxy_links
+
+# Import from modular architecture
+from src.core.proxy_collect.checker import check_many
+from src.core.proxy_collect.collector import collect_all
+from src.core.proxy_collect.sources import DEFAULT_SOURCES
+from src.core.proxy_collect.parser import extract_proxy_links
+from src.services import MobileClipboardService, MobileNotificationService
 
 # Для Android
 try:
     from android.permissions import request_permissions, Permission
 except ImportError:
     pass
+
 
 class ProxyCollectorMobileApp(App):
     def build(self):
@@ -40,6 +45,10 @@ class ProxyCollectorMobileApp(App):
         self.working_proxies = []
         self.is_running = False
         self.stop_event = threading.Event()
+        
+        # Сервисы
+        self.clipboard = MobileClipboardService()
+        self.notification = MobileNotificationService()
         
         return self.create_main_screen()
     
@@ -182,12 +191,8 @@ class ProxyCollectorMobileApp(App):
     
     def copy_single_link(self, link):
         """Копирует одну ссылку."""
-        try:
-            from kivy.core.clipboard import Clipboard
-            Clipboard.copy(link)
+        if self.clipboard.copy_text(link):
             self.log_message(f'📋 Скопировано: {link[:50]}...')
-        except:
-            pass
     
     def start_collection(self, instance):
         if self.is_running:
@@ -248,6 +253,11 @@ class ProxyCollectorMobileApp(App):
                 self.log_message(f'🛑 Остановлено. Рабочих: {len(self.working_proxies)}')
             else:
                 self.log_message(f'✅ Готово! Найдено {len(self.working_proxies)} рабочих прокси')
+                # Показываем уведомление
+                self.notification.show_notification(
+                    'Proxy Collector',
+                    f'Найдено {len(self.working_proxies)} рабочих прокси'
+                )
         
         except Exception as e:
             self.log_message(f'❌ Ошибка: {str(e)}')
@@ -263,12 +273,11 @@ class ProxyCollectorMobileApp(App):
             return
         
         links = '\n'.join(r.proxy.tg_link() for r in self.working_proxies)
-        try:
-            from kivy.core.clipboard import Clipboard
-            Clipboard.copy(links)
+        if self.clipboard.copy_text(links):
             self.log_message(f'📋 Скопировано {len(self.working_proxies)} прокси')
-        except Exception as e:
-            self.log_message(f'❌ Ошибка копирования: {e}')
+        else:
+            self.log_message('❌ Ошибка копирования')
+
 
 if __name__ == '__main__':
     ProxyCollectorMobileApp().run()
